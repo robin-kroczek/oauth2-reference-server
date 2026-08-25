@@ -1,0 +1,2 @@
+spring.application.name=spring-authorization-server
+spring.pid.file=spring-authorization-server.pid
