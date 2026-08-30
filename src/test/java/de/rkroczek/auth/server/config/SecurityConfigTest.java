@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestPropertySource(properties = {"management.endpoints.web.exposure.include=health,info,env", "management.endpoint.health.probes.enabled=true"})
+@TestPropertySource(properties = {"management.endpoints.web.exposure.include=health,info,env", "management.endpoint.health.probes.enabled=true", "management.server.port=8080"})
 public class SecurityConfigTest {
 
     @Autowired
