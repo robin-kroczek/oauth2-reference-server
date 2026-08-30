@@ -1,2 +1,4 @@
-spring.application.name=spring-authorization-server
-spring.pid.file=spring-authorization-server.pid
+spring.application.name=oauth2-reference-server
+management.server.port=8081
+management.endpoint.health.probes.enabled=true
+management.web.exposure.include=health

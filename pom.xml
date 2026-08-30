@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>de.rkroczek</groupId>
-    <artifactId>spring-authorization-server</artifactId>
+    <artifactId>oauth2-reference-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>spring-authorization-server</name>
-    <description>spring-authorization-server</description>
+    <name>oauth2-reference-server</name>
+    <description>oauth2-reference-server</description>
     <url/>
     <licenses>
         <license/>
