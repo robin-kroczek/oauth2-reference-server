@@ -10,7 +10,8 @@ services:
       - "127.0.0.1:8080:8080"
 
     env_file:
-      - app.env
+      - path: app.env
+        required: false
 
     read_only: true
     tmpfs:
