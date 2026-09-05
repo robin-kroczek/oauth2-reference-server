@@ -62,4 +62,10 @@ public class SecurityConfigTest {
     void noRedirectToLoginPage() throws Exception {
         mockMvc.perform(get("/actuator/env")).andExpect(status().isForbidden()).andExpect(header().doesNotExist(HttpHeaders.LOCATION));
     }
+
+    @Test
+    @DisplayName("other endpoints are non-existent by default")
+    void oidcDiscoveryIsNotServed() throws Exception {
+        mockMvc.perform(get("/.well-known/openid-configuration")).andExpect(status().isNotFound());
+    }
 }
