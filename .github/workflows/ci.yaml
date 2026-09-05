@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches-ignore: [deploy]
+    tags: ["v*"]
   pull_request:
     branches:
       - main
@@ -48,7 +49,10 @@ jobs:
   image:
     name: Image bauen & veröffentlichen
     needs: verify
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: >-
+      github.event_name == 'push' &&
+      (github.ref == 'refs/heads/main' ||
+       startsWith(github.ref, 'refs/tags/v'))
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -69,9 +73,13 @@ jobs:
         uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          # latest wird ausschließlich durch die raw-Regel unten gesetzt
+          flavor: |
+            latest=false
           tags: |
             type=sha,format=long
-            type=raw,value=latest
+            type=semver,pattern={{version}}
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
 
       - id: build
         uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
@@ -85,13 +93,18 @@ jobs:
           provenance: mode=max
           sbom: true
 
+      # Nur main aktualisiert die Dev-Umgebung. Ein Tag-Build erzeugt einen
+      # anderen Digest (abweichende Labels) und würde dev sonst grundlos
+      # neu deployen.
       - name: deploy-Branch auschecken
+        if: github.ref == 'refs/heads/main'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: deploy
           path: .deploy-state
 
       - name: Digest für dev festschreiben
+        if: github.ref == 'refs/heads/main'
         working-directory: .deploy-state
         run: |
           echo "APP_IMAGE=${REGISTRY}/${IMAGE_NAME}@${{ steps.build.outputs.digest }}" > dev.env
