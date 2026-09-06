@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+APP_DIR=/opt/oauth2-reference-server
 REPO_DIR=/opt/oauth2-reference-server/repo
+SECRETS_FILE="$APP_DIR/secrets.env"
+LOCK_FILE="$APP_DIR/.deploy.lock"
 STATE_FILE=dev.env
+
+[[ -r "$SECRETS_FILE" ]] || { echo "Missing $SECRETS_FILE" >&2; exit 1; }
 
 cd "$REPO_DIR"
 
-exec 9>"$REPO_DIR/../.deploy.lock"
+exec 9>"$LOCK_FILE"
 flock -n 9 || { echo "Deploy läuft bereits"; exit 0; }
 
 retry() {
@@ -24,7 +29,12 @@ PREV=""
 
 retry git fetch --quiet origin main deploy
 git reset --hard --quiet origin/main
-git show "origin/deploy:$STATE_FILE" > .env
+
+umask 077
+{
+    git show "origin/deploy:$STATE_FILE"
+    cat "$SECRETS_FILE"
+} > .env
 
 retry docker compose pull --quiet
 
