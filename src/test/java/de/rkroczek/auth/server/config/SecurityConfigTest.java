@@ -1,5 +1,6 @@
 package de.rkroczek.auth.server.config;
 
+import de.rkroczek.auth.server.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(properties = {"management.endpoints.web.exposure.include=health,info,env", "management.endpoint.health.probes.enabled=true", "management.server.port=8080"})
+@IntegrationTest
 public class SecurityConfigTest {
 
     @Autowired
